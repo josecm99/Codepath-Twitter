@@ -2,7 +2,9 @@ package com.codepath.apps.restclienttemplate.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
+@Parcel
 public class User {
 
     //List out the attributes that a user has
@@ -10,6 +12,11 @@ public class User {
     public long uid;
     public String screenName;
     public String profileImageURL;
+
+    public User(){
+
+    }// end default constructor
+
 
     //Deserialize the JSON
     public static User fromJSON(JSONObject jsonObject) throws JSONException {

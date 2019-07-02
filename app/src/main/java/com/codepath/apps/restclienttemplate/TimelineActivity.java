@@ -1,10 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -19,6 +22,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity {
 
+    public static final int COMPOSE_TWEET_REQUEST_CODE = 20;
     //Client we are using to connect to Twitter
     private TwitterClient client;
 
@@ -53,6 +57,60 @@ public class TimelineActivity extends AppCompatActivity {
 
         populateTimeline();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }// end onCreateOptionsMenu
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.miCompose:
+                Log.d("TimelineActivityDebug", "Pressed the Pencil Icon");
+                composeMessage();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }// end onOptionsItemSelected
+
+    //This method opens up an Intent that will take us to the ComposeActivity
+        //Allowing us to create and submit an actual tweet.
+    private void composeMessage() {
+
+        Log.d("TimelineActivityDebug", "About to enter the ComposeActivity");
+
+        Intent tweetIntent = new Intent(this, ComposeActivity.class);
+
+        startActivityForResult(tweetIntent, COMPOSE_TWEET_REQUEST_CODE);
+
+    }// end composeMessage
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // check request code and result code first
+        if (requestCode == COMPOSE_TWEET_REQUEST_CODE && resultCode == RESULT_OK){
+
+            Log.d("TimelineDebug", "About to try and unwrap my Tweet from ComposeActivity");
+
+            Tweet newTweet = (Tweet) data.getParcelableExtra(Tweet.class.getSimpleName() );
+
+            //Once we have this tweet, add it to the ArrayList in the first position and scroll up to see it having been added
+                //Don't forget to notify the adapter that you have inserted an item
+            Log.d("TimelineDebug", "Was able to get into onActivityResult");
+            tweets.add(0, newTweet);
+            tweetAdapter.notifyItemInserted(0);
+            rvTweets.scrollToPosition(0);
+            Log.d("TimelineDebug", "Was able to run the code in onActivityResult");
+        }// end if
+
+    }// end onActivityResult
+
+
 
     //This function will take care of populating our user's timeline once they are authenticated and logged in
     private void populateTimeline() {
