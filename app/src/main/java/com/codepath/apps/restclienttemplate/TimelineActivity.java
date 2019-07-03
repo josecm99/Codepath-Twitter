@@ -15,6 +15,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -97,7 +98,7 @@ public class TimelineActivity extends AppCompatActivity {
 
             Log.d("TimelineDebug", "About to try and unwrap my Tweet from ComposeActivity");
 
-            Tweet newTweet = (Tweet) data.getParcelableExtra(Tweet.class.getSimpleName() );
+            Tweet newTweet = Parcels.unwrap(data.getParcelableExtra(Tweet.class.getSimpleName()) );
 
             //Once we have this tweet, add it to the ArrayList in the first position and scroll up to see it having been added
                 //Don't forget to notify the adapter that you have inserted an item

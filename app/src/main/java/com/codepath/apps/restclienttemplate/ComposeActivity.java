@@ -30,6 +30,8 @@ public class ComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
 
+        client = TwitterApplication.getRestClient(this);
+
         Log.d("ComposeActivityDebug", "Got into the onCreate in ComposeActivity");
 
         etTweet = (EditText) findViewById(R.id.etTweet);
@@ -49,7 +51,7 @@ public class ComposeActivity extends AppCompatActivity {
     }
 
     private void sendTweet() {
-        client = TwitterApplication.getRestClient(this);
+
 
 
         //Start the network request here.
@@ -74,7 +76,7 @@ public class ComposeActivity extends AppCompatActivity {
 
                         Intent resultTweet = new Intent();
 
-                        resultTweet.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(resultTweet));
+                        resultTweet.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(newTweet));
 
                         //Once we've done that, we can call setResult and then finish with this Activity
                         setResult(RESULT_OK, resultTweet);
