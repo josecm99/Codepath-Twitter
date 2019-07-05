@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
@@ -28,6 +31,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
     //Context that we get from onCreateViewHolder
     Context context;
+
+    //TwitterClient object we will use to update the Tweet information when necessary
+    TwitterClient client;
 
     //Pass in the Tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets){
@@ -56,8 +62,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
     //Bind the values based on the position of the element
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Tweet tweet = mTweets.get(i);
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
+        final Tweet tweet = mTweets.get(i);
+
+        //Initialize the client here for updating use later on.
+        client = TwitterApplication.getRestClient(context);
 
         //Populate the views according to this data
         viewHolder.tvUserName.setText("@" + tweet.user.screenName);
@@ -81,6 +90,99 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
 
         viewHolder.ivOptionalImage.setVisibility(View.GONE);
+
+        if (tweet.hasRetweeted){
+            viewHolder.ivRetweetImage.setImageResource(R.drawable.ic_vector_retweet);
+        }else{
+            viewHolder.ivRetweetImage.setImageResource(R.drawable.ic_vector_retweet_stroke);
+        }
+        if (tweet.hasFavorited){
+            viewHolder.ivFavoriteImage.setImageResource(R.drawable.ic_vector_heart);
+        }else{
+            viewHolder.ivFavoriteImage.setImageResource(R.drawable.ic_vector_heart_stroke);
+        }
+
+
+
+
+        viewHolder.ivFavoriteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tweet.hasFavorited){
+                    client.unFavoriteTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            //Change the state of the image
+                            viewHolder.ivFavoriteImage.setImageResource(R.drawable.ic_vector_heart_stroke);
+
+                            //Update the number of favorites
+                            viewHolder.tvFavoriteNum.setText(Integer.toString(tweet.favoriteCount - 1) );
+                        }// end onSuccess
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Log.d("TweetAdapterDebug", "Something went wack over here somewhere...");
+                        }
+                    });
+                }// end if
+                else{
+                    client.favoriteTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            //Change the state of the image
+                            viewHolder.ivFavoriteImage.setImageResource(R.drawable.ic_vector_heart);
+                            //Update the number of favorites
+                            viewHolder.tvFavoriteNum.setText(Integer.toString(tweet.favoriteCount + 1) );
+                        }// end onSuccess
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Log.d("TweetAdapterDebug", "Something went wack over here somewhere...");
+                        }
+                    });
+                }// end else
+            }
+        });
+
+
+        viewHolder.ivRetweetImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tweet.hasRetweeted){
+                    client.unRetweetTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            //Change the state of the image
+                            viewHolder.ivRetweetImage.setImageResource(R.drawable.ic_vector_retweet_stroke);
+
+                            //Update the number of Retweets
+                            viewHolder.tvRetweetNum.setText(Integer.toString(tweet.retweetCount - 1) );
+                        }// end onSuccess
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Log.d("TweetAdapterDebug", "Something went wack over here somewhere...");
+                        }
+                    });
+                }// end if
+                else{
+                    client.retweetTweet(tweet.uid, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            //Change the state of the image
+                            viewHolder.ivRetweetImage.setImageResource(R.drawable.ic_vector_retweet);
+                            //Update the number of retweets
+                            viewHolder.tvRetweetNum.setText(Integer.toString(tweet.retweetCount + 1) );
+                        }// end onSuccess
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Log.d("TweetAdapterDebug", "Something went wack over here somewhere...");
+                        }
+                    });
+                }// end else
+            }
+        });
 
         //Perform check here to see if tweet media is empty or not
 //        if (tweet.media == null) {
@@ -132,6 +234,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         public TextView tvActualName;
         public TextView tvRetweetNum;
         public TextView tvFavoriteNum;
+        public ImageView ivRetweetImage;
+        public ImageView ivFavoriteImage;
 
         public ImageView ivOptionalImage;
 
@@ -147,6 +251,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             tvRetweetNum = (TextView) itemView.findViewById(R.id.tvRetweetNum);
             tvFavoriteNum = (TextView) itemView.findViewById(R.id.tvFavoriteNum);
             ivOptionalImage = (ImageView) itemView.findViewById(R.id.ivOptionalImage);
+            ivRetweetImage = (ImageView) itemView.findViewById(R.id.ivRetweetImage);
+            ivFavoriteImage = (ImageView) itemView.findViewById(R.id.ivFavoriteImage);
+
         }// end constructor
 
     }// end inner class ViewHolder

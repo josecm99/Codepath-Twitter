@@ -54,15 +54,49 @@ public class TwitterClient extends OAuthBaseClient {
 	//Very similar to the getHomeTimeline.
 		//Performs a POST instead of a GET, and also includes the GET method
 	public void sendTweet(String message, AsyncHttpResponseHandler handler) {
-		Log.d("TwitterClientDebug", "About to start sending Tweet");
 		String apiUrl = getApiUrl("statuses/update.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", message);
 		client.post(apiUrl, params, handler);
 		Log.d("TwitterClientDebug", "Finished sending Tweet");
+	}// end sendTweet
 
-	}
+
+	public void favoriteTweet(long tweetID, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/create.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetID);
+		client.post(apiUrl, params, handler);
+	}// end favoriteTweet
+
+
+	public void unFavoriteTweet(long tweetID, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/destroy.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetID);
+		client.post(apiUrl, params, handler);
+	}// end unFavoriteTweet
+
+
+	public void retweetTweet(long tweetID, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/retweet.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetID);
+		client.post(apiUrl, params, handler);
+	}// end retweetTweet
+
+
+	public void unRetweetTweet(long tweetID, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/unretweet.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetID);
+		client.post(apiUrl, params, handler);
+	}// end unRetweetTweet
 
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
