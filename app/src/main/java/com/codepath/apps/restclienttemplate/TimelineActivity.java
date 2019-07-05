@@ -1,11 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,9 +36,12 @@ public class TimelineActivity extends AppCompatActivity {
 
     private RecyclerView rvTweets;
 
-    private Toolbar toolbar;
+//    private ActionBar actionBar;
+
+    private SwipeRefreshLayout swipeContainer;
 
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,18 +58,47 @@ public class TimelineActivity extends AppCompatActivity {
         //Construct adapter from this data source
         tweetAdapter = new TweetAdapter(tweets);
 
-        toolbar = (Toolbar) findViewById(R.id.tbTimeline);
-        setSupportActionBar(toolbar);
+//        actionBar = this.getActionBar();
+//        actionBar.setBackgroundDrawable(new ColorDrawable(R.color.twitter_blue) );
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(R.color.twitter_blue) );
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
+
+
 
 
         //RecyclerView Setup(layout manager, use adapter)
         rvTweets.setLayoutManager(new LinearLayoutManager(this) );
         rvTweets.setAdapter(tweetAdapter);
 
-
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         populateTimeline();
     }
+
+
+    public void fetchTimelineAsync(int page) {
+            tweetAdapter.clear();
+            populateTimeline();
+            swipeContainer.setRefreshing(false);
+
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

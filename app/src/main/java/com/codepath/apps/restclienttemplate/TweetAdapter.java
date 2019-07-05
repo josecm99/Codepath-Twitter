@@ -16,6 +16,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -157,6 +160,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
                             //Update the number of Retweets
                             viewHolder.tvRetweetNum.setText(Integer.toString(tweet.retweetCount - 1) );
+                            notifyDataSetChanged();
                         }// end onSuccess
 
                         @Override
@@ -173,6 +177,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
                             viewHolder.ivRetweetImage.setImageResource(R.drawable.ic_vector_retweet);
                             //Update the number of retweets
                             viewHolder.tvRetweetNum.setText(Integer.toString(tweet.retweetCount + 1) );
+                            notifyDataSetChanged();
                         }// end onSuccess
 
                         @Override
@@ -201,6 +206,32 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
     public int getItemCount() {
         return mTweets.size();
     }// end getItemCount
+
+
+
+    public void clear() {
+        mTweets.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add tweets
+    public void addAll(JSONArray jsonArray) {
+        for (int i =0; i < jsonArray.length(); i++){
+            //Convert each object to a Tweet Model
+            try {
+                Tweet tweet = Tweet.fromJSON(jsonArray.getJSONObject(i));
+                //Add that Tweet Model to our data source
+                mTweets.add(tweet);
+                //Notify the adapter that we've added an item
+                notifyItemInserted(mTweets.size() - 1);
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+
+
+        }// end for
+        notifyDataSetChanged();
+    }
 
 
 
