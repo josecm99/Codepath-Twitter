@@ -12,6 +12,13 @@ public class Tweet {
     public long uid;
     public User user;
     public String createdAt;
+    public int retweetCount;
+    public int favoriteCount;
+    public boolean hasFavorited;
+    public boolean hasRetweeted;
+
+    //This attribute will be its own JSONArray (for extracting media)
+//    public Media media;
 
     public Tweet(){
 
@@ -25,7 +32,15 @@ public class Tweet {
         tweet.body = jsonObject.getString("text");
         tweet.uid = jsonObject.getLong("id");
         tweet.createdAt = jsonObject.getString("created_at");
+        tweet.retweetCount = jsonObject.getInt("retweet_count");
+        tweet.favoriteCount = jsonObject.getInt("favorite_count");
+        tweet.hasRetweeted = jsonObject.getBoolean("retweeted");
+        tweet.hasFavorited = jsonObject.getBoolean("favorited");
+
+
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user") );
+
+//        tweet.media = Media.fromJSON(jsonObject.getJSONObject("extended_entities").getJSONArray("media") );
         return tweet;
     }// end fromJSON
 

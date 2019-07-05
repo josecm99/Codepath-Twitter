@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +34,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     private RecyclerView rvTweets;
 
+    private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,10 @@ public class TimelineActivity extends AppCompatActivity {
         //Construct adapter from this data source
         tweetAdapter = new TweetAdapter(tweets);
 
+        toolbar = (Toolbar) findViewById(R.id.tbTimeline);
+        setSupportActionBar(toolbar);
+
+
         //RecyclerView Setup(layout manager, use adapter)
         rvTweets.setLayoutManager(new LinearLayoutManager(this) );
         rvTweets.setAdapter(tweetAdapter);
@@ -62,7 +69,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_timeline, menu);
         return true;
     }// end onCreateOptionsMenu
 
@@ -86,6 +93,8 @@ public class TimelineActivity extends AppCompatActivity {
         Log.d("TimelineActivityDebug", "About to enter the ComposeActivity");
 
         Intent tweetIntent = new Intent(this, ComposeActivity.class);
+
+
 
         startActivityForResult(tweetIntent, COMPOSE_TWEET_REQUEST_CODE);
 

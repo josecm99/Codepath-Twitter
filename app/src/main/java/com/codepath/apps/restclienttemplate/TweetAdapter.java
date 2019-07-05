@@ -11,12 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
@@ -28,6 +31,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
     //Pass in the Tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets){
+
         mTweets = tweets;
     }// end constructor
 
@@ -56,15 +60,38 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         Tweet tweet = mTweets.get(i);
 
         //Populate the views according to this data
-        viewHolder.tvUserName.setText(tweet.user.name);
+        viewHolder.tvUserName.setText("@" + tweet.user.screenName);
 
         viewHolder.tvBody.setText(tweet.body);
 
         viewHolder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt) );
 
+        viewHolder.tvActualName.setText(tweet.user.name);
+
+        viewHolder.tvRetweetNum.setText(Integer.toString(tweet.retweetCount) );
+
+        viewHolder.tvFavoriteNum.setText(Integer.toString(tweet.favoriteCount) );
+
+        // Doing this for the profile pic
         Glide.with(context)
                 .load(tweet.user.profileImageURL)
+                .bitmapTransform(new CenterCrop(context) )
+                .bitmapTransform(new CropCircleTransformation(context) )
                 .into(viewHolder.ivProfileImage);
+
+
+        viewHolder.ivOptionalImage.setVisibility(View.GONE);
+
+        //Perform check here to see if tweet media is empty or not
+//        if (tweet.media == null) {
+//            viewHolder.ivOptionalImage.setVisibility(View.GONE);
+//        }// end if
+//        else{
+//            Glide.with(context)
+//                    .load(tweet.media.mediaURLHttps)
+//                    .into(viewHolder.ivOptionalImage);
+//        }// end else
+
 
     }// end onBindViewHolder
 
@@ -93,7 +120,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         return relativeDate;
     } // end getRelativeTimeAgo
 
-    //create ViewHolder class
+    //create inner ViewHolder class
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
 
@@ -102,6 +129,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         public TextView tvUserName;
         public TextView tvBody;
         public TextView tvRelativeTime;
+        public TextView tvActualName;
+        public TextView tvRetweetNum;
+        public TextView tvFavoriteNum;
+
+        public ImageView ivOptionalImage;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -111,6 +143,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
+            tvActualName = (TextView) itemView.findViewById(R.id.tvActualName);
+            tvRetweetNum = (TextView) itemView.findViewById(R.id.tvRetweetNum);
+            tvFavoriteNum = (TextView) itemView.findViewById(R.id.tvFavoriteNum);
+            ivOptionalImage = (ImageView) itemView.findViewById(R.id.ivOptionalImage);
         }// end constructor
 
     }// end inner class ViewHolder
