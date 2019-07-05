@@ -58,8 +58,6 @@ public class TimelineActivity extends AppCompatActivity {
         //Construct adapter from this data source
         tweetAdapter = new TweetAdapter(tweets);
 
-//        actionBar = this.getActionBar();
-//        actionBar.setBackgroundDrawable(new ColorDrawable(R.color.twitter_blue) );
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(R.color.twitter_blue) );
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);

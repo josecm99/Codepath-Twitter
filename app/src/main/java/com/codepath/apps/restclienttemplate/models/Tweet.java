@@ -1,5 +1,7 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
@@ -18,7 +20,8 @@ public class Tweet {
     public boolean hasRetweeted;
 
     //This attribute will be its own JSONArray (for extracting media)
-//    public Media media;
+    public Media media;
+    public boolean hasMedia;
 
     public Tweet(){
 
@@ -40,7 +43,17 @@ public class Tweet {
 
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user") );
 
-//        tweet.media = Media.fromJSON(jsonObject.getJSONObject("extended_entities").getJSONArray("media") );
+        Log.d("TweetDebug", "Current Tweet: \n\t" + tweet.user + "\n\t" + tweet.body);
+
+        JSONObject jsonEntities = jsonObject.getJSONObject("entities");
+
+        if (jsonEntities.has("media") ){
+            tweet.media = Media.fromJSON(jsonEntities.getJSONArray("media") );
+        }// end if
+        else{
+            tweet.media = null;
+        }
+
         return tweet;
     }// end fromJSON
 

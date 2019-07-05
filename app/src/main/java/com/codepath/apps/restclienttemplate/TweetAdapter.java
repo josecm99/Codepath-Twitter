@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
 
@@ -190,14 +191,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         });
 
         //Perform check here to see if tweet media is empty or not
-//        if (tweet.media == null) {
-//            viewHolder.ivOptionalImage.setVisibility(View.GONE);
-//        }// end if
-//        else{
-//            Glide.with(context)
-//                    .load(tweet.media.mediaURLHttps)
-//                    .into(viewHolder.ivOptionalImage);
-//        }// end else
+        if (tweet.media == null) {
+            viewHolder.ivOptionalImage.setVisibility(View.GONE);
+        }// end if
+        else{
+            viewHolder.ivOptionalImage.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(tweet.media.mediaURLHttps)
+                    .bitmapTransform(new RoundedCornersTransformation(context, 30, 20) )
+                    .into(viewHolder.ivOptionalImage);
+        }// end else
 
 
     }// end onBindViewHolder
