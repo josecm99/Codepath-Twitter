@@ -60,6 +60,8 @@ This entire week I got really sick and couldn't do my work to my fullest potenti
 
 However, I was able to finish the required user stories and implement a few of the optional stories before the deadline
 
+Finally, I was unable to add User details to the ComposeActivity since I could not find a way to use the API to get the authenticating user's information (screen_name, name, and profile_picture). But the Tweet implementation all works correctly, and there are TextViews and ImageViews there as placeholders.
+
 
 ## Open-source libraries used
 
