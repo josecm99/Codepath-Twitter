@@ -1,0 +1,7 @@
+#Internal package file, do not edit.
+#Mon Jul 01 16:28:53 PDT 2019
+0.baseType=DIRECTORY
+0.base=/Users/jcruz99/AndroidStudioProjects/Twitter/Codepath-Twitter/app/build/intermediates/dex/debug/mergeDexDebug/out
+0.path=classes.dex
+0.set=DEX
+count=1

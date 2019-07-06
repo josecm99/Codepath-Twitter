@@ -26,7 +26,7 @@ public class ComposeActivity extends AppCompatActivity {
 
     public static final int MAX_TWEET_LENGTH = 140;
     private EditText etTweet;
-    private Button btnSend;
+    private Button btnTweet;
     private TextView tvCharsRemaining;
     private TwitterClient client;
 
@@ -44,7 +44,7 @@ public class ComposeActivity extends AppCompatActivity {
         Log.d("ComposeActivityDebug", "Got into the onCreate in ComposeActivity");
 
         etTweet = (EditText) findViewById(R.id.etTweet);
-        btnSend = (Button) findViewById(R.id.btnTweet);
+        btnTweet = (Button) findViewById(R.id.btnTweet);
         tvCharsRemaining = findViewById(R.id.tvCharsRemaining);
 
         tvCharsRemaining.setText(Integer.toString(MAX_TWEET_LENGTH) );
@@ -73,10 +73,10 @@ public class ComposeActivity extends AppCompatActivity {
 
         //INCLUDE SOMETHING HERE FOR PUTTING USER INTO COMPOSE_ACTIVITY
 
-        btnSend.setBackgroundColor(getResources().getColor(R.color.twitter_blue) );
-        btnSend.setTextColor(Color.WHITE);
+        btnTweet.setBackgroundColor(getResources().getColor(R.color.twitter_blue) );
+        btnTweet.setTextColor(Color.WHITE);
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendTweet();
@@ -125,11 +125,14 @@ public class ComposeActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                else{
+
+                }
             }// end onSuccess
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                Log.d("ComposeDebug", error.getMessage(), error);
             }// end onFailure
         });
 
